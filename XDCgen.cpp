@@ -38,11 +38,18 @@ void XDCgen::readFile(string fileName)
 	int pin;
 
     // extract comma-separated values
-    
+    // CSV format is signal,index,header,pin
     while(!infile.eof())
     {
+        infile.getline(signalName, 256, ',');
+        infile.getline(index, 256, ',');
+        infile.getline(header, 256, ',');
+        infile.getline(pin, 256, '\n');
 
+        newConstraint(signalName, index, header, pin);
     }
+
+    infile.close();
 }
 
 void XDCgen::writeFile(string fileName)
