@@ -32,24 +32,33 @@ void XDCgen::readFile(string fileName)
     ifstream infile;
     infile.open(fileName);
 
-    string signalName;
-	int index;
-	string header;
-	int pin;
-
-    // extract comma-separated values
-    // CSV format is signal,index,header,pin
-    while(!infile.eof())
+    if (!infile.is_open())
     {
-        infile.getline(signalName, 256, ',');
-        infile.getline(index, 256, ',');
-        infile.getline(header, 256, ',');
-        infile.getline(pin, 256, '\n');
-
-        newConstraint(signalName, index, header, pin);
+        cout << "Error opening file " << fileName << endl;
+        failBit = true;
     }
+    else
+    {
+        cout << "Reading from " << fileName << endl;
+        string signalName;
+        int index;
+        string header;
+        int pin;
+    
+        // extract comma-separated values
+        // CSV format is signal,index,header,pin
+        while(!infile.eof())
+        {
+            infile.getline(signalName, 256, ',');
+            infile.getline(index, 256, ',');
+            infile.getline(header, 256, ',');
+            infile.getline(pin, 256, '\n');
+    
+            newConstraint(signalName, index, header, pin);
+        }
 
-    infile.close();
+        infile.close();
+    }
 }
 
 void XDCgen::writeFile(string fileName)
@@ -57,14 +66,26 @@ void XDCgen::writeFile(string fileName)
     ofstream outfile;
     outfile.open(fileName);
 
-    // format all constraints and write them to a file
-    while(!ConstList.empty())
+    if (!outfile.is_open())
     {
-        outfile << toString(ConstList.top()) << endl;
-        ConstList.pop();
+        cout << "Error writing to file " << fileName << endl;
+        failBit = true;
     }
+    else if(failBit)
+    {
+        cout << "Unable to write file because of previous errors" << endl;
+    }
+    else
+    {
+        // format all constraints and write them to a file
+        while (!ConstList.empty())
+        {
+            outfile << toString(ConstList.top()) << endl;
+            ConstList.pop();
+        }
 
-    outfile.close();
+        outfile.close();
+    }
 }
 
 string XDCgen::set_property(string property, string value, string signal, int index)
