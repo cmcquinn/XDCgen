@@ -46,12 +46,13 @@ private:
         string packagePin;
         string signal;
         int index;
+        string note;
     };
 
     Pinmap Snickerdoodle;
     string set_property(string property, string value, string signal, int index);
     string get_ports(string signal, int index);
-    void newConstraint(string signalName, int index, string header, int pin);
+    void newConstraint(string signalName, int index, string header, int pin, string note);
     string toString(Constraint info);
     bool failBit;
     queue<Constraint> ConstList;

@@ -2,7 +2,7 @@
 
 using namespace std;
 
-void XDCgen::newConstraint(string signalName, int index, string header, int pin)
+void XDCgen::newConstraint(string signalName, int index, string header, int pin, string note)
 {
     Constraint newConst;
     newConst.header = header;
@@ -10,6 +10,7 @@ void XDCgen::newConstraint(string signalName, int index, string header, int pin)
     newConst.signal = signalName;
     newConst.index = index;
     newConst.packagePin = Snickerdoodle.getPackagePin(header, pin);
+    newConst.note = note;
 
     // store the constraint in the FIFO queue
     ConstList.push(newConst);
@@ -20,7 +21,15 @@ string XDCgen::toString(Constraint info)
     stringstream commands;
     
 
-    commands << "### " << info.header << "." << info.pin << endl;
+    commands << "### " << info.header << "." << info.pin;
+
+    // print note, if there is one
+    if (!info.note.empty())
+    {
+        commands << " (" << info.note << ")";
+    }
+
+    commands << endl;
     commands << set_property("PACKAGE_PIN", info.packagePin, info.signal, info.index) << endl;
     commands << set_property("IOSTANDARD", "LVCMOS33", info.signal, info.index) << endl;
 
@@ -44,12 +53,14 @@ void XDCgen::readFile(string fileName)
         string indexString;
         string header;
         string pinString;
+        string note;
+        string remainder;
 
         int index;
         int pin;
     
         // extract comma-separated values
-        // CSV format is signal,index,header,pin
+        // CSV format is signal,index,header,pin,note
         while(!infile.eof())
         {
             // ignore lines starting with '#' and ',' to allow for comments and empty lines in the CSV
@@ -62,12 +73,32 @@ void XDCgen::readFile(string fileName)
             getline(infile, signalName, ',');
             getline(infile, indexString, ',');
             getline(infile, header, ',');
-            getline(infile, pinString, '\n');
+
+            // handle optional note at the end of the line
+            // read the rest of the line into a string
+            getline(infile, remainder, '\n');
+
+            // if the string contains a comma, the line includes a note
+            if (remainder.find(',') != string::npos)
+            {
+                // put the pin number and note back into a stringstream
+                istringstream iss (remainder);
+
+                // extract the pin number and note separately
+                getline(iss, pinString, ',');
+                getline(iss, note, '\n');
+            }
+            // no note on this line
+            else
+            {
+                pinString = remainder;
+                note = "";
+            }
 
             index = stoi(indexString);
             pin = stoi(pinString);
     
-            newConstraint(signalName, index, header, pin);
+            newConstraint(signalName, index, header, pin, note);
         }
 
         infile.close();
