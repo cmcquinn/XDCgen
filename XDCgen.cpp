@@ -52,6 +52,13 @@ void XDCgen::readFile(string fileName)
         // CSV format is signal,index,header,pin
         while(!infile.eof())
         {
+            // ignore lines starting with '#' and ',' to allow for comments and empty lines in the CSV
+            if (infile.peek() == '#' || infile.peek() == ',')
+            {
+                // ignore until newline
+                infile.ignore(256, '\n');
+            }
+
             getline(infile, signalName, ',');
             getline(infile, indexString, ',');
             getline(infile, header, ',');
