@@ -64,14 +64,6 @@ void XDCgen::readFile(string fileName)
         // CSV format is signal,index,header,pin,note
         do
         {
-            // clear strings before each run
-            //signalName.clear();
-            //indexString.clear();
-            //header.clear();
-            //pinString.clear();
-            //note.clear();
-            //remainder.clear();
-
             // ignore lines starting with '#' and ',' to allow for comments and empty lines in the CSV
             if (infile.peek() == '#' || infile.peek() == ',')
             {
@@ -116,6 +108,10 @@ void XDCgen::readFile(string fileName)
     
             newConstraint(signalName, index, header, pin, note);
         } while(!infile.eof());
+
+        // the last constraint is getting read twice
+        // this is a shim to fix that until I figure out a better fix
+        ConstList.pop();
 
         infile.close();
     }
