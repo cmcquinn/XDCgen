@@ -1,0 +1,13 @@
+#X axis,,,,
+IOBits,0,JA1,5,X Dir
+IOBits,1,JA1,6,X Step
+IOBits,2,JA1,7,GPIO - X enable
+#,,JA1,8,CS X
+IOBits,3,JA2,6,GPIO - X Home/limit
+,,,,
+#Y axis,,,,
+IOBits,4,JA1,11,Y Dir
+IOBits,5,JA1,12,Y Step
+IOBits,6,JA1,13,GPIO - Y enable
+#,,JA1,14,CS Y
+IOBits,7,JA2,7,GPIO - Y Home/limit

@@ -1,4 +1,5 @@
 #include "XDCgen.h"
+#include <iomanip>
 
 using namespace std;
 
@@ -71,42 +72,43 @@ void XDCgen::readFile(string fileName)
                 cout << "Ignoring line " << line << endl;
                 infile.ignore(256, '\n');
                 line++;
-                continue;
             }
-
-            getline(infile, signalName, ',');
-            getline(infile, indexString, ',');
-            getline(infile, header, ',');
-
-            // handle optional note at the end of the line
-            // read the rest of the line into a string
-            getline(infile, remainder, '\n');
-            line++;
-
-            // if the string contains a comma, the line includes a note
-            if (remainder.find(',') != string::npos)
-            {
-                // put the pin number and note back into a stringstream
-                istringstream iss (remainder);
-
-                // extract the pin number and note separately
-                getline(iss, pinString, ',');
-                getline(iss, note, '\n');
-            }
-            // no note on this line
             else
             {
-                pinString = remainder;
-                note = "";
-            }
-
-            //cout << "indexString: " << indexString << endl;
-            //cout << "pinString: " << pinString << endl;
-
-            index = stoi(indexString);
-            pin = stoi(pinString);
+                getline(infile, signalName, ',');
+                getline(infile, indexString, ',');
+                getline(infile, header, ',');
     
-            newConstraint(signalName, index, header, pin, note);
+                // handle optional note at the end of the line
+                // read the rest of the line into a string
+                getline(infile, remainder, '\n');
+    
+                // if the string contains a comma, the line includes a note
+                if (remainder.find(',') != string::npos)
+                {
+                    // put the pin number and note back into a stringstream
+                    istringstream iss (remainder);
+    
+                    // extract the pin number and note separately
+                    getline(iss, pinString, ',');
+                    getline(iss, note, '\n');
+                }
+                // no note on this line
+                else
+                {
+                    pinString = remainder;
+                    note = "";
+                }
+    
+                //cout << "indexString: " << indexString << endl;
+                //cout << "pinString: " << pinString << endl;
+    
+                index = stoi(indexString);
+                pin = stoi(pinString);
+        
+                newConstraint(signalName, index, header, pin, note);
+                line++;
+            }
         } while(!infile.eof());
 
         // the last constraint is getting read twice
@@ -149,8 +151,10 @@ string XDCgen::set_property(string property, string value, string signal, int in
     stringstream propertyCmd;
 
     // assemble set_property command
-    propertyCmd << "set_property " << property << "\t" << value;
-    propertyCmd << "\t\t\t" << "[" << get_ports(signal, index) << "]";
+    propertyCmd << setw(20) << left << "set_property ";
+    propertyCmd << setw(15) << left << property;
+    propertyCmd << setw(10) << left << value;
+    propertyCmd << "[" << get_ports(signal, index) << "]";
     //propertyCmd << endl;
 
     return propertyCmd.str();
