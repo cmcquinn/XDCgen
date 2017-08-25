@@ -1,0 +1,52 @@
+#X axis,,,,
+IOBits,0,JA1,5,X Dir
+IOBits,1,JA1,6,X Step
+IOBits,2,JA1,7,GPIO - X enable
+#,,JA1,8,CS X
+IOBits,3,JA2,6,GPIO - X Home/limit
+,,,,
+#Y axis,,,,
+IOBits,4,JA1,11,Y Dir
+IOBits,5,JA1,12,Y Step
+IOBits,6,JA1,13,GPIO - Y enable
+#,,JA1,14,CS Y
+IOBits,7,JA2,7,GPIO - Y Home/limit
+,,,,
+#Z axis,,,,
+IOBits,8,JA1,17,Z Dir
+IOBits,9,JA1,18,Z Step
+IOBits,10,JA1,19,GPIO - Z enable
+#,,JA1,20,CS Z
+IOBits,11,JA2,8,GPIO - Z Home/limit
+,,,,
+#Extruder A,,,,
+IOBits,12,JA1,23,A Dir
+IOBits,13,JA1,24,A Step
+IOBits,14,JA1,25,GPIO - Extruder A enable
+#,,JA1,26,CS A
+IOBits,15,JA1,4,GPIO - Extruder A filament loaded
+IOBits,16,JA1,35,PWM - Extruder A heater
+IOBits,17,JA1,36,PWM - Extruder A fan control
+,,,,
+#Extruder B,,,,
+IOBits,18,JA1,29,B Dir
+IOBits,19,JA1,30,B Step
+IOBits,20,JA1,31,GPIO - Extruder B enable
+#,,JA1,32,CS B
+IOBits,21,JA2,4,GPIO - Extruder B filament loaded
+IOBits,22,JA1,37,PWM - Extruder B heater
+IOBits,23,JA1,38,PWM - Extruder B fan control
+,,,,
+#Other,,,,
+IOBits,24,JA2,5,PWM - bed heater
+IOBits,25,JA2,6,GPIO
+IOBits,26,JA2,7,GPIO
+IOBits,27,JA2,8,GPIO
+IOBits,28,JA2,11,GPIO
+IOBits,29,JA2,12,GPIO
+IOBits,30,JA2,13,GPIO
+IOBits,31,JA2,14,GPIO
+IOBits,32,JA2,17,GPIO
+IOBits,33,JA2,18,GPIO
+IOBits,34,JA2,19,GPIO
+IOBits,35,JA2,20,GPIO

@@ -40,6 +40,7 @@ void XDCgen::readFile(string fileName)
 {
     ifstream infile;
     infile.open(fileName);
+    int line = 1;
 
     if (!infile.is_open())
     {
@@ -61,13 +62,24 @@ void XDCgen::readFile(string fileName)
     
         // extract comma-separated values
         // CSV format is signal,index,header,pin,note
-        while(!infile.eof())
+        do
         {
+            // clear strings before each run
+            //signalName.clear();
+            //indexString.clear();
+            //header.clear();
+            //pinString.clear();
+            //note.clear();
+            //remainder.clear();
+
             // ignore lines starting with '#' and ',' to allow for comments and empty lines in the CSV
             if (infile.peek() == '#' || infile.peek() == ',')
             {
                 // ignore until newline
+                cout << "Ignoring line " << line << endl;
                 infile.ignore(256, '\n');
+                line++;
+                continue;
             }
 
             getline(infile, signalName, ',');
@@ -77,6 +89,7 @@ void XDCgen::readFile(string fileName)
             // handle optional note at the end of the line
             // read the rest of the line into a string
             getline(infile, remainder, '\n');
+            line++;
 
             // if the string contains a comma, the line includes a note
             if (remainder.find(',') != string::npos)
@@ -95,11 +108,14 @@ void XDCgen::readFile(string fileName)
                 note = "";
             }
 
+            //cout << "indexString: " << indexString << endl;
+            //cout << "pinString: " << pinString << endl;
+
             index = stoi(indexString);
             pin = stoi(pinString);
     
             newConstraint(signalName, index, header, pin, note);
-        }
+        } while(!infile.eof());
 
         infile.close();
     }
@@ -139,7 +155,7 @@ string XDCgen::set_property(string property, string value, string signal, int in
     // assemble set_property command
     propertyCmd << "set_property " << property << "\t" << value;
     propertyCmd << "\t\t\t" << "[" << get_ports(signal, index) << "]";
-    propertyCmd << endl;
+    //propertyCmd << endl;
 
     return propertyCmd.str();
 }

@@ -54,6 +54,6 @@ private:
     string get_ports(string signal, int index);
     void newConstraint(string signalName, int index, string header, int pin, string note);
     string toString(Constraint info);
-    bool failBit;
+    bool failBit = false;
     queue<Constraint> ConstList;
 };
