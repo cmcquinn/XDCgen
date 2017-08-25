@@ -21,8 +21,8 @@ string XDCgen::toString(Constraint info)
     
 
     commands << "### " << info.header << "." << info.pin << endl;
-    commands << set_property(PACKAGE_PIN, info.packagePin, info.signal, info.index) << endl;
-    commands << set_property(IOSTANDARD, LVCMOS33, info.signal, info.index) << endl;
+    commands << set_property("PACKAGE_PIN", info.packagePin, info.signal, info.index) << endl;
+    commands << set_property("IOSTANDARD", "LVCMOS33", info.signal, info.index) << endl;
 
     return commands.str();
 }
@@ -41,18 +41,24 @@ void XDCgen::readFile(string fileName)
     {
         cout << "Reading from " << fileName << endl;
         string signalName;
-        int index;
+        string indexString;
         string header;
+        string pinString;
+
+        int index;
         int pin;
     
         // extract comma-separated values
         // CSV format is signal,index,header,pin
         while(!infile.eof())
         {
-            infile.getline(signalName, 256, ',');
-            infile.getline(index, 256, ',');
-            infile.getline(header, 256, ',');
-            infile.getline(pin, 256, '\n');
+            getline(infile, signalName, ',');
+            getline(infile, indexString, ',');
+            getline(infile, header, ',');
+            getline(infile, pinString, '\n');
+
+            index = stoi(indexString);
+            pin = stoi(pinString);
     
             newConstraint(signalName, index, header, pin);
         }
@@ -80,7 +86,7 @@ void XDCgen::writeFile(string fileName)
         // format all constraints and write them to a file
         while (!ConstList.empty())
         {
-            outfile << toString(ConstList.top()) << endl;
+            outfile << toString(ConstList.front()) << endl;
             ConstList.pop();
         }
 
@@ -105,7 +111,7 @@ string XDCgen::get_ports(string signal, int index)
     stringstream portCmd;
     
     // assemble get_ports command
-    portCmd << "get_ports {" << << signal << "[" << index << "]" << "}";
+    portCmd << "get_ports {" << signal << "[" << index << "]" << "}";
 
     return portCmd.str();
 }

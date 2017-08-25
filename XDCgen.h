@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <vector>
+#include <queue>
 #include <string>
 #include "Pinmap.h"
 
@@ -39,13 +39,6 @@ public:
     }
 
 private:
-    Pinmap Snickerdoodle;
-    string set_property(string property, string value, string signal, int index);
-    string get_ports(string signal, int index);
-    void newConstraint(string signalName, int index, string header, int pin);
-    string toString(Constraint info);
-    bool failBit;
-
     struct Constraint
     {
         string header;
@@ -55,5 +48,11 @@ private:
         int index;
     };
 
+    Pinmap Snickerdoodle;
+    string set_property(string property, string value, string signal, int index);
+    string get_ports(string signal, int index);
+    void newConstraint(string signalName, int index, string header, int pin);
+    string toString(Constraint info);
+    bool failBit;
     queue<Constraint> ConstList;
-}
+};
