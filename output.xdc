@@ -1,3 +1,7 @@
+### JA1.5 (X Dir)
+set_property        PACKAGE_PIN    E18       [get_ports {IOBits[0]}]
+set_property        IOSTANDARD     LVCMOS33  [get_ports {IOBits[0]}]
+
 ### JA1.6 (X Step)
 set_property        PACKAGE_PIN    D20       [get_ports {IOBits[1]}]
 set_property        IOSTANDARD     LVCMOS33  [get_ports {IOBits[1]}]

@@ -41,7 +41,8 @@ void XDCgen::readFile(string fileName)
 {
     ifstream infile;
     infile.open(fileName);
-    int line = 1;
+    int lineNum = 1;
+    string line;
 
     if (!infile.is_open())
     {
@@ -63,25 +64,28 @@ void XDCgen::readFile(string fileName)
     
         // extract comma-separated values
         // CSV format is signal,index,header,pin,note
-        do
+        while(getline(infile, line))
         {
+            // make an istringstream to process the line
+            istringstream currentLine (line);
+
             // ignore lines starting with '#' and ',' to allow for comments and empty lines in the CSV
-            if (infile.peek() == '#' || infile.peek() == ',')
+            if (currentLine.peek() == '#' || currentLine.peek() == ',')
             {
                 // ignore until newline
-                cout << "Ignoring line " << line << endl;
-                infile.ignore(256, '\n');
-                line++;
+                cout << "Ignoring line " << lineNum << endl;
+                currentLine.ignore(256, '\n');
+                lineNum++;
             }
             else
             {
-                getline(infile, signalName, ',');
-                getline(infile, indexString, ',');
-                getline(infile, header, ',');
+                getline(currentLine, signalName, ',');
+                getline(currentLine, indexString, ',');
+                getline(currentLine, header, ',');
     
                 // handle optional note at the end of the line
                 // read the rest of the line into a string
-                getline(infile, remainder, '\n');
+                getline(currentLine, remainder, '\n');
     
                 // if the string contains a comma, the line includes a note
                 if (remainder.find(',') != string::npos)
@@ -107,14 +111,10 @@ void XDCgen::readFile(string fileName)
                 pin = stoi(pinString);
         
                 newConstraint(signalName, index, header, pin, note);
-                line++;
+                lineNum++;
             }
-        } while(!infile.eof());
-
-        // the last constraint is getting read twice
-        // this is a shim to fix that until I figure out a better fix
-        ConstList.pop();
-
+        }
+        
         infile.close();
     }
 }
