@@ -110,7 +110,18 @@ void XDCgen::readFile(string fileName)
                 index = stoi(indexString);
                 pin = stoi(pinString);
         
-                newConstraint(signalName, index, header, pin, note);
+                if (!Snickerdoodle.isConstrained(header, pin))
+                {
+                    newConstraint(signalName, index, header, pin, note);
+                }
+                else
+                {
+                    cout << "Error constraining " << signalName << "[" << index << "]";
+                    cout << " to " << header << "." << pin << ":";
+                    cout << " pin is already in constrained to another signal. Check your input file" << endl;
+                    failBit = true;
+                    break;
+                }
                 lineNum++;
             }
         }

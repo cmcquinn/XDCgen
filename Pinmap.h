@@ -144,6 +144,12 @@ public:
         IOmap[boardPin("JC1",36)] = "Y6";
         IOmap[boardPin("JC1",37)] = "Y8";
         IOmap[boardPin("JC1",38)] = "Y7";
+
+        // initialize usage map
+        for (map<boardPin, string>::iterator it = IOmap.begin(); it != IOmap.end(); ++it)
+        {
+            UsageMap[it->first] = false;
+        }
     }
     
     ~Pinmap()
@@ -151,9 +157,17 @@ public:
 
     }
 
+    bool isConstrained(string header, int pin)
+    {
+        return UsageMap[boardPin(header, pin)] != 0;
+    }
 
     string getPackagePin(string header, int pin)
     {
+        // record that this pin is used
+        UsageMap[boardPin(header, pin)] = true;
+
+        // return the package pin
         return IOmap[boardPin(header, pin)];
     }
 
@@ -183,4 +197,5 @@ private:
     };
 
     map <boardPin, string> IOmap;
+    map <boardPin, bool> UsageMap;
 };
