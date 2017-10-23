@@ -136,7 +136,7 @@ void XDCgen::writeFile(string outfileName, string infileName)
     outfile.open(outfileName);
 
     // Print a header at the top of the outfile
-    outfile << "### " << outfileName << " - generated from " << infileName;
+    outfile << "### " << outfileName << " - generated from " << infileName << endl;
 
     if (!outfile.is_open())
     {
