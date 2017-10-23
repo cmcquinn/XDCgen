@@ -22,7 +22,7 @@ public:
 
     void readFile(string fileName);
 
-    void writeFile(string fileName);
+    void writeFile(string outfileName, string infileName);
 
     int state()
     {

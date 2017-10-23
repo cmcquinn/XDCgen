@@ -130,14 +130,17 @@ void XDCgen::readFile(string fileName)
     }
 }
 
-void XDCgen::writeFile(string fileName)
+void XDCgen::writeFile(string outfileName, string infileName)
 {
     ofstream outfile;
-    outfile.open(fileName);
+    outfile.open(outfileName);
+
+    // Print a header at the top of the outfile
+    outfile << "### " << outfileName << " - generated from " << infileName;
 
     if (!outfile.is_open())
     {
-        cout << "Error writing to file " << fileName << endl;
+        cout << "Error writing to file " << outfileName << endl;
         failBit = true;
     }
     else if(failBit)

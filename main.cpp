@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
     else
     {
         ConstraintManager.readFile(argv[1]);
-        ConstraintManager.writeFile(argv[2]);
+        ConstraintManager.writeFile(argv[2], argv[1]);
         return ConstraintManager.state();
     }
 }
