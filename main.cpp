@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 
     if (argc != 3)
     {
-        cout << "Usage: " << argv[0] << "<input>.csv <output>.xdc" << endl;
+        cout << "Usage: " << argv[0] << " <input>.csv <output>.xdc" << endl;
         return 1;
     }
     else

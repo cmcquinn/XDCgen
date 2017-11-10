@@ -159,16 +159,19 @@ public:
 
     bool isConstrained(string header, int pin)
     {
-        return UsageMap[boardPin(header, pin)] != 0;
+        return IOmap[boardPin(header, pin)] == "1";
     }
 
     string getPackagePin(string header, int pin)
     {
-        // record that this pin is used
-        UsageMap[boardPin(header, pin)] = true;
+        // get the package pin
+        string packagePin = IOmap[boardPin(header, pin)];
+
+        // set the value for this pin to 1, so we know that it has been used
+        IOmap[boardPin(header, pin)] = "1";
 
         // return the package pin
-        return IOmap[boardPin(header, pin)];
+        return packagePin;
     }
 
 private:
@@ -177,6 +180,7 @@ private:
     {
         string header;
         int pin;
+        bool isUsed = false;
 
         // constructor with initializer list
         boardPin(string headerName, int pinNumber) :
