@@ -1,0 +1,19 @@
+name: Continuous Integration
+# trigger on push to repo
+on: [push]
+
+jobs:
+  build_job:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v2
+      - name: Install CMake
+        run: sudo apt install cmake
+      - name: Create build directory
+        run: mkdir build && cd build
+      - name: CMake configure
+        run: cmake ..
+      - name: Build
+        run: make -j`nproc`
