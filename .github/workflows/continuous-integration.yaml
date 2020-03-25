@@ -12,7 +12,7 @@ jobs:
       - name: Install CMake
         run: sudo apt install cmake
       - name: Create build directory
-        run: mkdir build && cd build
+        run: cd $GITHUB_WORKSPACE && mkdir build && cd build
       - name: CMake configure
         run: cmake ..
       - name: Build
