@@ -12,8 +12,8 @@ jobs:
       - name: Install CMake
         run: sudo apt install cmake
       - name: Create build directory
-        run: echo $GITHUB_WORKSPACE && cd $GITHUB_WORKSPACE && ls && mkdir build && cd build
+        run: cd $GITHUB_WORKSPACE && mkdir build && cd build
       - name: CMake configure
-        run: cmake ..
+        run: cd $GITHUB_WORKSPACE/build && cmake ..
       - name: Build
-        run: make -j`nproc`
+        run: cd $GITHUB_WORKSPACE/build && make -j`nproc`
