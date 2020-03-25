@@ -1,46 +1,35 @@
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <queue>
-#include <string>
 #include "Pinmap.h"
+#include <fstream>
+#include <iostream>
+#include <queue>
+#include <sstream>
+#include <string>
 
 using namespace std;
 
-class XDCgen
-{
+class XDCgen {
 public:
-    XDCgen()
-    {
+    XDCgen() {}
 
-    }
-    
-    ~XDCgen()
-    {
-
-    }
+    ~XDCgen() {}
 
     void readFile(string fileName);
 
     void writeFile(string outfileName, string infileName);
 
-    int state()
-    {
-        if (failBit)
-        {
+    int state() {
+        if (failBit) {
             cout << "Something went wrong. Exiting..." << endl;
             return 1;
         }
-        else
-        {
+        else {
             cout << "Files have been written" << endl;
             return 0;
         }
     }
 
 private:
-    struct Constraint
-    {
+    struct Constraint {
         string header;
         int pin;
         string packagePin;

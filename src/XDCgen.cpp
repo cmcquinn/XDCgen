@@ -3,30 +3,26 @@
 
 using namespace std;
 
-void XDCgen::newConstraint(string signalName, int index, string header, int pin, string note)
-{
+void XDCgen::newConstraint(string signalName, int index, string header, int pin, string note) {
     Constraint newConst;
-    newConst.header = header;
-    newConst.pin = pin;
-    newConst.signal = signalName;
-    newConst.index = index;
+    newConst.header     = header;
+    newConst.pin        = pin;
+    newConst.signal     = signalName;
+    newConst.index      = index;
     newConst.packagePin = Snickerdoodle.getPackagePin(header, pin);
-    newConst.note = note;
+    newConst.note       = note;
 
     // store the constraint in the FIFO queue
     ConstList.push(newConst);
 }
 
-string XDCgen::toString(Constraint info)
-{
+string XDCgen::toString(Constraint info) {
     stringstream commands;
-    
 
     commands << "### " << info.header << "." << info.pin;
 
     // print note, if there is one
-    if (!info.note.empty())
-    {
+    if (!info.note.empty()) {
         commands << " (" << info.note << ")";
     }
 
@@ -37,20 +33,17 @@ string XDCgen::toString(Constraint info)
     return commands.str();
 }
 
-void XDCgen::readFile(string fileName)
-{
+void XDCgen::readFile(string fileName) {
     ifstream infile;
     infile.open(fileName);
     int lineNum = 1;
     string line;
 
-    if (!infile.is_open())
-    {
+    if (!infile.is_open()) {
         cout << "Error opening file " << fileName << endl;
         failBit = true;
     }
-    else
-    {
+    else {
         cout << "Reading from " << fileName << endl;
         string signalName;
         string indexString;
@@ -61,97 +54,88 @@ void XDCgen::readFile(string fileName)
 
         int index;
         int pin;
-    
+
         // extract comma-separated values
         // CSV format is signal,index,header,pin,note
-        while(getline(infile, line))
-        {
+        while (getline(infile, line)) {
             // make an istringstream to process the line
-            istringstream currentLine (line);
+            istringstream currentLine(line);
 
-            // ignore lines starting with '#' and ',' to allow for comments and empty lines in the CSV
-            if (currentLine.peek() == '#' || currentLine.peek() == ',')
-            {
+            // ignore lines starting with '#' and ',' to allow for comments and empty lines in the
+            // CSV
+            if (currentLine.peek() == '#' || currentLine.peek() == ',') {
                 // ignore until newline
                 cout << "Ignoring line " << lineNum << endl;
                 currentLine.ignore(256, '\n');
                 lineNum++;
             }
-            else
-            {
+            else {
                 getline(currentLine, signalName, ',');
                 getline(currentLine, indexString, ',');
                 getline(currentLine, header, ',');
-    
+
                 // handle optional note at the end of the line
                 // read the rest of the line into a string
                 getline(currentLine, remainder, '\n');
-    
+
                 // if the string contains a comma, the line includes a note
-                if (remainder.find(',') != string::npos)
-                {
+                if (remainder.find(',') != string::npos) {
                     // put the pin number and note back into a stringstream
-                    istringstream iss (remainder);
-    
+                    istringstream iss(remainder);
+
                     // extract the pin number and note separately
                     getline(iss, pinString, ',');
                     getline(iss, note, '\n');
                 }
                 // no note on this line
-                else
-                {
+                else {
                     pinString = remainder;
-                    note = "";
+                    note      = "";
                 }
-    
-                //cout << "indexString: " << indexString << endl;
-                //cout << "pinString: " << pinString << endl;
-    
+
+                // cout << "indexString: " << indexString << endl;
+                // cout << "pinString: " << pinString << endl;
+
                 index = stoi(indexString);
-                pin = stoi(pinString);
-        
-                if (!Snickerdoodle.isConstrained(header, pin))
-                {
+                pin   = stoi(pinString);
+
+                if (!Snickerdoodle.isConstrained(header, pin)) {
                     newConstraint(signalName, index, header, pin, note);
                 }
-                else
-                {
+                else {
                     cout << "Error constraining " << signalName << "[" << index << "]";
                     cout << " to " << header << "." << pin << ":";
-                    cout << " pin is already in constrained to another signal. Check your input file" << endl;
+                    cout
+                        << " pin is already in constrained to another signal. Check your input file"
+                        << endl;
                     failBit = true;
                     break;
                 }
                 lineNum++;
             }
         }
-        
+
         infile.close();
     }
 }
 
-void XDCgen::writeFile(string outfileName, string infileName)
-{
+void XDCgen::writeFile(string outfileName, string infileName) {
     ofstream outfile;
     outfile.open(outfileName);
 
     // Print a header at the top of the outfile
     outfile << "### " << outfileName << " - generated from " << infileName << endl;
 
-    if (!outfile.is_open())
-    {
+    if (!outfile.is_open()) {
         cout << "Error writing to file " << outfileName << endl;
         failBit = true;
     }
-    else if(failBit)
-    {
+    else if (failBit) {
         cout << "Unable to write file because of previous errors" << endl;
     }
-    else
-    {
+    else {
         // format all constraints and write them to a file
-        while (!ConstList.empty())
-        {
+        while (!ConstList.empty()) {
             outfile << toString(ConstList.front()) << endl;
             ConstList.pop();
         }
@@ -160,8 +144,7 @@ void XDCgen::writeFile(string outfileName, string infileName)
     }
 }
 
-string XDCgen::set_property(string property, string value, string signal, int index)
-{
+string XDCgen::set_property(string property, string value, string signal, int index) {
     stringstream propertyCmd;
 
     // assemble set_property command
@@ -169,17 +152,17 @@ string XDCgen::set_property(string property, string value, string signal, int in
     propertyCmd << setw(15) << left << property;
     propertyCmd << setw(10) << left << value;
     propertyCmd << "[" << get_ports(signal, index) << "]";
-    //propertyCmd << endl;
+    // propertyCmd << endl;
 
     return propertyCmd.str();
 }
 
-string XDCgen::get_ports(string signal, int index)
-{
+string XDCgen::get_ports(string signal, int index) {
     stringstream portCmd;
-    
+
     // assemble get_ports command
-    portCmd << "get_ports {" << signal << "[" << index << "]" << "}";
+    portCmd << "get_ports {" << signal << "[" << index << "]"
+            << "}";
 
     return portCmd.str();
 }
